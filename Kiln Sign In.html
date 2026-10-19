@@ -1,0 +1,401 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Kiln Sign In</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: full-height split. Left = brand panel with a live board preview, right = sign-in form. Stacks under 860px. */
+  :root {
+    --bg: #f6f7fb;
+    --surface: #ffffff;
+    --fg: #14192b;
+    --muted: #5b6380;
+    --line: #dde1ee;
+    --accent: #d9480f;
+    --accent-fg: #ffffff;
+    --accent-soft: #fdeee6;
+    --focus: #2f5bff;
+    --danger: #c92a2a;
+    --ok: #2b8a3e;
+    --panel: #172447;
+    --panel-2: #1f2f5c;
+    --panel-fg: #eef1fb;
+    --panel-muted: #9ca8d1;
+    --panel-line: #31427a;
+
+    --font-display: "Bricolage Grotesque", "DM Sans", system-ui, sans-serif;
+    --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d1224;
+      --surface: #151b33;
+      --fg: #eceffa;
+      --muted: #98a1c4;
+      --line: #2a3359;
+      --accent: #ff7a3d;
+      --accent-fg: #1a0b02;
+      --accent-soft: #3a2015;
+      --focus: #8aa4ff;
+      --danger: #ff8787;
+      --ok: #69db7c;
+      --panel: #0a1130;
+      --panel-2: #121c45;
+      --panel-fg: #eef1fb;
+      --panel-muted: #8f9bc7;
+      --panel-line: #25336a;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1224;
+    --surface: #151b33;
+    --fg: #eceffa;
+    --muted: #98a1c4;
+    --line: #2a3359;
+    --accent: #ff7a3d;
+    --accent-fg: #1a0b02;
+    --accent-soft: #3a2015;
+    --focus: #8aa4ff;
+    --danger: #ff8787;
+    --ok: #69db7c;
+    --panel: #0a1130;
+    --panel-2: #121c45;
+    --panel-fg: #eef1fb;
+    --panel-muted: #8f9bc7;
+    --panel-line: #25336a;
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    min-height: 100%;
+  }
+
+  /* ---------- Left: brand panel ---------- */
+  .brand {
+    background: var(--panel);
+    color: var(--panel-fg);
+    padding-block: 40px;
+    padding-left: max(48px, env(safe-area-inset-left, 0px));
+    padding-right: max(48px, env(safe-area-inset-right, 0px));
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 40px;
+    min-width: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .brand::after {
+    content: "";
+    position: absolute;
+    inset: auto -20% -35% auto;
+    width: 70%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, var(--panel-2), transparent);
+    pointer-events: none;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: -0.01em; position: relative; z-index: 1; }
+  .logo svg { flex: none; }
+
+  .pitch { position: relative; z-index: 1; display: grid; gap: 28px; min-width: 0; }
+  .pitch h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(30px, 3.6vw, 46px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin: 0;
+    max-width: 14ch;
+    text-wrap: balance;
+  }
+  .pitch p { margin: 0; color: var(--panel-muted); max-width: 44ch; }
+
+  .board {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    max-width: 520px;
+  }
+  .col { display: grid; gap: 8px; align-content: start; min-width: 0; }
+  .col h2 {
+    margin: 0 0 2px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--panel-muted);
+    display: flex; justify-content: space-between;
+  }
+  .card {
+    background: var(--panel-2);
+    border: 1px solid var(--panel-line);
+    border-radius: 8px;
+    padding: 10px 10px 9px;
+    font-size: 12.5px;
+    line-height: 1.35;
+    display: grid;
+    gap: 8px;
+  }
+  .card .tag { font-family: var(--font-mono); font-size: 10.5px; color: var(--panel-muted); }
+  .card.hot { border-color: var(--accent); }
+  .card.done { opacity: 0.7; text-decoration: line-through; text-decoration-color: var(--panel-line); }
+
+  .brand footer { position: relative; z-index: 1; font-family: var(--font-mono); font-size: 12px; color: var(--panel-muted); }
+
+  /* ---------- Right: form ---------- */
+  .form-side {
+    display: grid;
+    place-items: center;
+    padding-block: 40px;
+    padding-left: max(24px, env(safe-area-inset-left, 0px));
+    padding-right: max(24px, env(safe-area-inset-right, 0px));
+    min-width: 0;
+  }
+  .form-wrap { width: 100%; max-width: 380px; display: grid; gap: 28px; min-width: 0; }
+  .form-wrap h2 { font-family: var(--font-display); font-weight: 700; font-size: 30px; letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 6px; }
+  .form-wrap .sub { margin: 0; color: var(--muted); }
+
+  form { display: grid; gap: 18px; }
+  .field { display: grid; gap: 6px; }
+  .label-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  label { font-weight: 600; font-size: 13.5px; }
+  .field input[type="email"], .field input[type="password"], .field input[type="text"] {
+    width: 100%;
+    font: inherit;
+    color: var(--fg);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 11px 12px;
+    min-height: 44px;
+  }
+  .field input::placeholder { color: var(--muted); opacity: 0.8; }
+  .field input[aria-invalid="true"] { border-color: var(--danger); }
+  .pw { position: relative; }
+  .pw input { padding-right: 64px; }
+  .pw button {
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    background: none; border: 0; color: var(--muted);
+    font: inherit; font-size: 13px; font-weight: 600;
+    padding: 6px 8px; border-radius: 6px; cursor: pointer;
+  }
+  .pw button:hover { color: var(--fg); }
+  .err { color: var(--danger); font-size: 13px; min-height: 0; margin: 0; }
+  .err:empty { display: none; }
+
+  a { color: var(--fg); text-decoration-color: var(--line); text-underline-offset: 3px; }
+  a:hover { text-decoration-color: var(--accent); }
+  .small-link { font-size: 13px; color: var(--muted); }
+
+  .check { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+  .check input { width: 18px; height: 18px; accent-color: var(--accent); margin: 0; }
+  .check label { font-weight: 400; }
+
+  .btn {
+    font: inherit; font-weight: 600;
+    min-height: 46px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    padding: 0 16px;
+  }
+  .btn.primary { background: var(--accent); color: var(--accent-fg); }
+  .btn.primary:hover { filter: brightness(1.06); }
+  .btn.primary:disabled { opacity: 0.7; cursor: progress; }
+  .btn.ghost { background: var(--surface); color: var(--fg); border-color: var(--line); }
+  .btn.ghost:hover { border-color: var(--muted); }
+
+  .or { display: flex; align-items: center; gap: 14px; color: var(--muted); font-size: 12px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
+  .or::before, .or::after { content: ""; height: 1px; background: var(--line); flex: 1; }
+  .alts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+
+  .status { margin: 0; padding: 10px 12px; border-radius: 8px; font-size: 13.5px; background: var(--accent-soft); color: var(--fg); }
+  .status[hidden] { display: none; }
+  .signup { margin: 0; text-align: center; color: var(--muted); font-size: 14px; }
+
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  /* ---------- Narrow screens ---------- */
+  @media (max-width: 860px) {
+    .split { grid-template-columns: minmax(0, 1fr); }
+    .brand { padding-block: 24px; gap: 0; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+    .pitch, .brand footer { display: none; }
+    .form-side { padding-block: 32px 48px; align-items: start; }
+  }
+  @media (max-width: 420px) {
+    .alts { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="split">
+  <aside class="brand">
+    <div class="logo">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+        <rect x="2" y="2" width="26" height="26" rx="7" fill="#d9480f"/>
+        <path d="M10 8v14M10 15l8-7M12.5 13l6.5 9" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      Kiln
+    </div>
+
+    <div class="pitch">
+      <h1>Plan the sprint. Ship on Friday.</h1>
+      <p>Kiln keeps tasks, owners and deadlines in one board your whole team reads the same way.</p>
+
+      <div class="board" aria-label="Sample sprint board">
+        <div class="col">
+          <h2>To do <span>3</span></h2>
+          <div class="card"><span>Add JWT refresh endpoint</span><span class="tag">API-142</span></div>
+          <div class="card"><span>Paginate order list</span><span class="tag">API-147</span></div>
+        </div>
+        <div class="col">
+          <h2>In progress <span>2</span></h2>
+          <div class="card hot"><span>Login form validation</span><span class="tag">WEB-88 · due Fri</span></div>
+          <div class="card"><span>MySQL index review</span><span class="tag">DB-31</span></div>
+        </div>
+        <div class="col">
+          <h2>Done <span>9</span></h2>
+          <div class="card done"><span>Set up CI pipeline</span><span class="tag">OPS-12</span></div>
+          <div class="card done"><span>User entity mapping</span><span class="tag">API-130</span></div>
+        </div>
+      </div>
+    </div>
+
+    <footer>Sprint 14 &middot; 5 working days left</footer>
+  </aside>
+
+  <main class="form-side">
+    <div class="form-wrap">
+      <div>
+        <h2>Welcome back</h2>
+        <p class="sub">Sign in to open your team's board.</p>
+      </div>
+
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" placeholder="you@company.com" aria-describedby="email-err">
+          <p class="err" id="email-err" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label for="password">Password</label>
+            <a class="small-link" href="#forgot">Forgot password?</a>
+          </div>
+          <div class="pw">
+            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="At least 8 characters" aria-describedby="pw-err">
+            <button type="button" id="toggle-pw" aria-controls="password" aria-pressed="false">Show</button>
+          </div>
+          <p class="err" id="pw-err" role="alert"></p>
+        </div>
+
+        <div class="check">
+          <input id="remember" name="remember" type="checkbox">
+          <label for="remember">Keep me signed in on this device</label>
+        </div>
+
+        <p class="status" id="status" role="status" hidden></p>
+        <button class="btn primary" id="submit" type="submit">Sign in</button>
+      </form>
+
+      <div class="or">or</div>
+      <div class="alts">
+        <button class="btn ghost" type="button" id="sso-google">Google</button>
+        <button class="btn ghost" type="button" id="sso-github">GitHub</button>
+      </div>
+
+      <p class="signup">New to Kiln? <a href="#signup">Create an account</a></p>
+    </div>
+  </main>
+</div>
+
+<script>
+  (function () {
+    var form = document.getElementById('login-form');
+    var email = document.getElementById('email');
+    var pw = document.getElementById('password');
+    var emailErr = document.getElementById('email-err');
+    var pwErr = document.getElementById('pw-err');
+    var status = document.getElementById('status');
+    var submit = document.getElementById('submit');
+    var toggle = document.getElementById('toggle-pw');
+
+    toggle.addEventListener('click', function () {
+      var show = pw.type === 'password';
+      pw.type = show ? 'text' : 'password';
+      toggle.textContent = show ? 'Hide' : 'Show';
+      toggle.setAttribute('aria-pressed', String(show));
+    });
+
+    function setError(input, el, msg) {
+      el.textContent = msg;
+      if (msg) input.setAttribute('aria-invalid', 'true');
+      else input.removeAttribute('aria-invalid');
+    }
+
+    function validate() {
+      var ok = true;
+      var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email.value.trim()) { setError(email, emailErr, 'Enter your email address.'); ok = false; }
+      else if (!emailRe.test(email.value.trim())) { setError(email, emailErr, 'That email looks incomplete. Check for a missing @ or domain.'); ok = false; }
+      else setError(email, emailErr, '');
+
+      if (!pw.value) { setError(pw, pwErr, 'Enter your password.'); ok = false; }
+      else if (pw.value.length < 8) { setError(pw, pwErr, 'Passwords have at least 8 characters.'); ok = false; }
+      else setError(pw, pwErr, '');
+      return ok;
+    }
+
+    email.addEventListener('input', function () { if (email.hasAttribute('aria-invalid')) validate(); });
+    pw.addEventListener('input', function () { if (pw.hasAttribute('aria-invalid')) validate(); });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      status.hidden = true;
+      if (!validate()) {
+        (email.hasAttribute('aria-invalid') ? email : pw).focus();
+        return;
+      }
+      submit.disabled = true;
+      submit.textContent = 'Signing in...';
+
+      // Replace this block with your real call, for example a Spring Boot endpoint:
+      // fetch('/api/auth/login', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ email: email.value.trim(), password: pw.value })
+      // }).then(...)
+      setTimeout(function () {
+        submit.disabled = false;
+        submit.textContent = 'Sign in';
+        status.hidden = false;
+        status.textContent = 'Demo only: the form is valid, but nothing was sent. Connect it to your login API in the submit handler.';
+      }, 700);
+    });
+
+    ['sso-google', 'sso-github'].forEach(function (id) {
+      document.getElementById(id).addEventListener('click', function () {
+        status.hidden = false;
+        status.textContent = 'Demo only: single sign-on is not connected.';
+      });
+    });
+  })();
+</script>
+
+</body></html>
